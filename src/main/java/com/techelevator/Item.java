@@ -7,16 +7,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Item extends VendingMachine {
+public class Item {
 	
 	private int quantity = 5;
-	private String type;
+	private String location;
 	private String name;
+	private double price;
+	private String type;
 	
-	public Item(String type, String name) {
-		this.type = type;
+	public Item(String location, String name, double price, String type) {
+		this.location = location;
 		this.name = name;
+		this.price = price;
+		this.type = type;
 	}	
+	
+
+		
+	
+	
+	
 	
 	public int getQuantityLeft() {
 		return quantity;
@@ -25,18 +35,31 @@ public class Item extends VendingMachine {
 	public String dispense(int quantityToRemove) {
 		if(quantity - quantityToRemove >=0) {
 			quantity -= quantityToRemove;
-			System.out.println("Success" + message());
+			System.out.println("Success");
 		}else {
 			System.out.println("Out of Stock");
 		}
 	}
-	
-	
+
+
+
 	//Getters & Setters
+
 	public int getQuantity() {
 		return quantity;
+	}
+	public String getLocation() {
+		return location;
+	}
+	public String getName() {
+		return name;
+	}
+	public double getPrice() {
+		return price;
 	}
 	public String getType() {
 		return type;
 	}
+	
+
 }
