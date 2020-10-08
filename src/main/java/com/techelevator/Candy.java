@@ -1,5 +1,5 @@
 package com.techelevator;
 
-public class Candy extends Inventory {
+public class Candy extends Item {
 
 }
