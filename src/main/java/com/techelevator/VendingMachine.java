@@ -23,6 +23,7 @@ public class VendingMachine implements Purchasable {
 		
 		while(!goodInput) {
 			System.out.println("(1) Display Vending Machine Items" + '\n' + "(2) Purchase" + '\n' + "(3) Exit");
+			System.out.println();
 			Scanner userInput = new Scanner(System.in);
 			String selection = userInput.nextLine();
 			
@@ -31,6 +32,7 @@ public class VendingMachine implements Purchasable {
 					goodInput = false;
 				}
 				else if(selection.equals("2")) {
+					purchaseMenu();
 					goodInput = true;
 				}
 				else if(selection.equals("3")) {
@@ -42,6 +44,10 @@ public class VendingMachine implements Purchasable {
 		}			
 	}
 		
+	public void purchaseMenu() {
+		System.out.println("(1) Feed Money" + '\n' + "(2) Select Product" + '\n' + "(3) Finish Transaction");
+		//System.out.println(currentMoney());
+	}
 	
 	private void stockFromFile() {
 		File inventory = new File("vendingmachine.csv");
@@ -58,7 +64,18 @@ public class VendingMachine implements Purchasable {
 				double price = Double.parseDouble(pieces[2]);
 				String type = pieces[3];
 				
-				this.inventoryList.add(new Item(location, name, price, type));
+				if(type.toLowerCase().equals("chip")) {
+					this.inventoryList.add(new Chip(location, name, price, type));
+				}
+				else if(type.toLowerCase().equals("candy")){
+					this.inventoryList.add(new Candy(location, name, price, type));
+				}
+				else if(type.toLowerCase().equals("drink")) {
+					this.inventoryList.add(new Drink(location, name, price, type));
+				}
+				else if(type.toLowerCase().equals("gum")) {
+					this.inventoryList.add(new Gum(location, name, price, type));
+				}
 			}
 		}
 		catch(FileNotFoundException e) {
@@ -67,14 +84,12 @@ public class VendingMachine implements Purchasable {
 		}	
 	}
 		
-	public String displayInventory() {
+	public void displayInventory() {
 		for(Item product : inventoryList) {
 			System.out.println(product.getLocation() + " | " + product.getName() + "| " + product.getPrice() + " | " + product.getType() + " | " + product.getQuantity());
 		}
 		System.out.println();
 		System.out.println();
-		return null;
-		
 	}
 	
 		
