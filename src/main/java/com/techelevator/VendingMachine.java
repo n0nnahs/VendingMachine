@@ -28,7 +28,7 @@ public class VendingMachine implements Purchasable {
 			
 				if(selection.equals("1")) {
 					displayInventory();
-					goodInput = true;
+					goodInput = false;
 				}
 				else if(selection.equals("2")) {
 					goodInput = true;
@@ -71,6 +71,8 @@ public class VendingMachine implements Purchasable {
 		for(Item product : inventoryList) {
 			System.out.println(product.getLocation() + " | " + product.getName() + "| " + product.getPrice() + " | " + product.getType() + " | " + product.getQuantity());
 		}
+		System.out.println();
+		System.out.println();
 		return null;
 		
 	}
