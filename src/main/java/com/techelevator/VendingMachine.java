@@ -1,5 +1,5 @@
 package com.techelevator;
 
-public class VendingMachine {
+public class VendingMachine implements Purchasable {
 
 }
