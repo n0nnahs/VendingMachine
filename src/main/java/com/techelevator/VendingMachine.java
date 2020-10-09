@@ -168,7 +168,7 @@ public class VendingMachine {
 		}
 	}
 
-	public void returnChange() {
+	public void returnChange() throws IOException {
 		int change = (int)(Math.ceil(currentBalance*100));
 		
 		int quarters = Math.round((int)change/25);
@@ -180,7 +180,10 @@ public class VendingMachine {
 	    int nickels = Math.round((int)change/5);
 	    change = change % 5;
 	    
+	    Log l = new Log("GIVE CHANGE: ", currentBalance, 0.00);
+	    
 	    currentBalance = 0;
+	    
 	    System.out.println("Quarters: " + quarters + ", Dimes: " + dimes + ", Nickels: " + nickels);
 	    
 	}
@@ -242,9 +245,13 @@ public class VendingMachine {
 	}
 		
 	public void displayInventory() {
+		System.out.println();
+		System.out.println("*********************************************************");
+
 		for(Item product : inventoryList) {
-			System.out.println(product.getLocation() + " | " + product.getName() + "| " + product.getPrice() + " | " + product.getType() + " | " + product.getQuantity());
+			System.out.println(product.getLocation() + " | " + product.getName() + "| $" + product.getPrice() + " | " + product.getType() + " | " + product.getQuantity());
 		}
+		System.out.println("*********************************************************");
 		System.out.println();
 	}
 	

@@ -3,6 +3,7 @@ package com.techelevator;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -14,6 +15,8 @@ public class Item {
 	private String name;
 	private double price;
 	private String type;
+	private static DecimalFormat df = new DecimalFormat("0.00");
+
 	
 	public Item(String location, String name, double price, String type) {
 		this.location = location;
@@ -21,24 +24,15 @@ public class Item {
 		this.price = price;
 		this.type = type;
 	}	
-	
 
-		
-	
-	
-	
-	
-	public int getQuantityLeft() {
-		return quantity;
-	}
-
-	public void dispense(int quantityToRemove) {
-		if(quantity - quantityToRemove >=0) {
+	public int dispense(int quantityToRemove) {
 			quantity -= quantityToRemove;
-			System.out.println(name + " $" + price * quantityToRemove);
+			System.out.println();
+			System.out.println(name + " $" + df.format(price * quantityToRemove));
 			message();
 			System.out.println();
-		}
+			
+			return quantity;
 	}
 
 	public void message() {
