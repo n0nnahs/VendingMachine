@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-public class VendingMachine implements Purchasable {
+public class VendingMachine {
 	Scanner userInput = new Scanner(System.in);
 	protected List<Item> inventoryList = new ArrayList<>();
 	protected double currentBalance = 0.00;
@@ -26,14 +26,19 @@ public class VendingMachine implements Purchasable {
 		stockFromFile();
 	}
 	
+		
 
 	public void mainMenu() throws NumberFormatException, IOException {
 		boolean goodInput = false;
+		System.out.println("*********************");
+		System.out.println("*  Vendo-Matic 800  *");
+		System.out.println("*     Main Menu     *");
+		System.out.println("*********************");
+		System.out.println();
 		
 		while(!goodInput) {
 			System.out.println("(1) Display Vending Machine Items      (2) Purchase      (3) Exit");
 			System.out.println();
-			//Scanner userInput = new Scanner(System.in);
 			String selection = userInput.nextLine();
 			
 				if(selection.equals("1")) {
@@ -46,6 +51,7 @@ public class VendingMachine implements Purchasable {
 				}
 				else if(selection.equals("3")) {
 					goodInput = true;
+					exit();
 				}
 				else if(selection.equals("4")) {
 					goodInput=true;
@@ -55,46 +61,57 @@ public class VendingMachine implements Purchasable {
 		
 	public void purchaseMenu() throws NumberFormatException, IOException {
 		boolean goodInput = false;
-		while(!goodInput) {
-		System.out.println("(1) Feed Money      (2) Select Product      (3) Finish Transaction");
-		System.out.println("Current Balance: $" + df.format(currentBalance));
+		System.out.println("*********************");
+		System.out.println("*  Vendo-Matic 800  *");
+		System.out.println("*   Purchase Menu   *");
+		System.out.println("*********************");
 		System.out.println();
-		String selection = userInput.nextLine();
 		
-			if(selection.equals("1")) {
-				//feed money
-				goodInput = true;
-				feedMoney();
-			}
-			else if(selection.equals("2")) {
-				//select product
-				selectItem();
-				goodInput = true;
-			}
-			else if(selection.equals("3")) {
-				//finish transaction
-				goodInput = true;
-			}		
-			}
+		while(!goodInput) {
+			System.out.println("(1) Feed Money      (2) Select Product      (3) Finish Transaction");
+			System.out.println("Current Balance: $" + df.format(currentBalance));
+			System.out.println();
+			String selection = userInput.nextLine();
+			
+				if(selection.equals("1")) {
+					//feed money
+					goodInput = true;
+					feedMoney();
+				}
+				else if(selection.equals("2")) {
+					//select product
+					selectItem();
+					goodInput = true;
+				}
+				else if(selection.equals("3")) {
+					returnChange();
+					goodInput = true;
+					mainMenu();
+				}		
+				}
 		}
 
 	public void feedMoney() throws NumberFormatException, IOException {
 		boolean finish = false;
 		while(!finish) {
 			System.out.println();
-			System.out.println("Please select amount to feed: (1) $1, (2) $2, (5) $5, (10) $10");
-			String money = userInput.nextLine();
 			System.out.println("\t Press P to Select Product");
+			System.out.println("Please select amount to feed: (1) $1, (2) $2, (5) $5, (10) $10");
+			System.out.println("Current balance: $" + df.format(currentBalance));
+			System.out.print(" >>> ");
+			String money = userInput.nextLine();
 			
 			if(money.toLowerCase().equals("p")) {
 				finish = true;
 				selectItem();
 			}
-			else {
-				log("FEED MONEY:", currentBalance, Double.parseDouble(money));
+			else if(money.equals("1") || money.equals("2") || money.equals("5") || money.equals("10")) {
+				double startingAmount = currentBalance;
 				currentBalance += Double.parseDouble(money);
-				System.out.println();
-				System.out.println("Current balance: $" + df.format(currentBalance));
+				Log l = new Log("FEED MONEY: ", startingAmount, currentBalance);
+			}
+			else {
+				System.out.println("Invalid input");
 			}
 		}
 	}
@@ -109,6 +126,7 @@ public class VendingMachine implements Purchasable {
 		int dispenseQuantity = 0;
 		
 		for(Item inventory : inventoryList) {
+			
 			//if user enters a valid location
 			if(inventory.getLocation().equals(userSelection)) {
 				System.out.println("How many would you like to dispense? ");
@@ -131,48 +149,62 @@ public class VendingMachine implements Purchasable {
 				
 					//if there is enough product
 					if(inventory.getQuantity() >= dispenseQuantity ) {
-						
+						//log(inventory.getName(), inventory.getLocation(), currentBalance, (currentBalance - (inventory.getPrice() * dispenseQuantity)));
+						double startingAmount = currentBalance;
 						currentBalance -= (inventory.getPrice() * dispenseQuantity);
 						inventory.dispense(dispenseQuantity);
+						
+						Log l = new Log(inventory.getName(), inventory.getLocation(), startingAmount, currentBalance);
+
 						purchaseMenu();
 					}
 			
 				}
-			}
-			else if(!inventory.getLocation().equals(userSelection)) {
+				else if(!inventory.getLocation().equals(userSelection)) {
 					System.out.println("Invalid selection");
 					selectItem();
-			}	
+			}
+			}
 		}
 	}
-	
-	private void log(String action, double startingMoney, double endingMoney) throws IOException {
-		DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
-		Date date = new Date();
-		String dateString = dateFormat.format(date);
+
+	public void returnChange() {
+		int change = (int)(Math.ceil(currentBalance*100));
 		
-		File log = new File("log.txt");
-		if(!log.exists()) {
-			try {
-				log.createNewFile();
-			}
-			catch(IOException e){
-				System.out.println("IO Exception");
-			}
-		}
-		try(FileWriter myFileWriter = new FileWriter(log.getAbsolutePath(), true); //open for appending instead of rewriting
-				PrintWriter myPrintWriter = new PrintWriter(myFileWriter)) {
-				myPrintWriter.println(dateString + " " + action + " $" + df.format(startingMoney) + " $" + df.format(endingMoney));
-			}
-		}	
+		int quarters = Math.round((int)change/25);
+	    change = change % 25;
+	    
+	    int dimes = Math.round((int)change/10);
+	    change = change % 10;
+	    
+	    int nickels = Math.round((int)change/5);
+	    change = change % 5;
+	    
+	    currentBalance = 0;
+	    System.out.println("Quarters: " + quarters + ", Dimes: " + dimes + ", Nickels: " + nickels);
+	    
+	}
+	public void applicationBanner() {
+		System.out.println("********************************");
+		System.out.println("*  Welcome to Vendo-Matic 800  *");
+		System.out.println("*  A product of Umbrella Corp  *");
+		System.out.println("********************************");
+		System.out.println();
+	}
 		
-		
-		
+	private void exit() {
+		System.out.println("*********************************************************");
+		System.out.println("*Umbrella Corp would like to thank you for your purchase*");
+		System.out.println("*     Thank you for vending with Vendo-Matic 800        *");
+		System.out.println("*********************************************************");
+
+		System.exit(1);;
+	}
 	
 	
 	
 	
-	private void stockFromFile() {
+	private boolean stockFromFile() {
 		File inventory = new File("vendingmachine.csv");
 		
 		try(Scanner inventoryStream = new Scanner(inventory)){
@@ -203,15 +235,16 @@ public class VendingMachine implements Purchasable {
 		}
 		catch(FileNotFoundException e) {
 			System.out.println("File Not Found!");
-			System.exit(1);
-		}	
+			return false;
+		}
+		return true;
+
 	}
 		
 	public void displayInventory() {
 		for(Item product : inventoryList) {
 			System.out.println(product.getLocation() + " | " + product.getName() + "| " + product.getPrice() + " | " + product.getType() + " | " + product.getQuantity());
 		}
-		System.out.println();
 		System.out.println();
 	}
 	

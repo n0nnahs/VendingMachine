@@ -35,7 +35,9 @@ public class Item {
 	public void dispense(int quantityToRemove) {
 		if(quantity - quantityToRemove >=0) {
 			quantity -= quantityToRemove;
+			System.out.println(name + " $" + price * quantityToRemove);
 			message();
+			System.out.println();
 		}
 	}
 
