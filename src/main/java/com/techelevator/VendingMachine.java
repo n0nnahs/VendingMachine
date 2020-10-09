@@ -12,12 +12,12 @@ import java.util.Scanner;
 public class VendingMachine implements Purchasable {
 	protected List<Item> inventoryList = new ArrayList<>();
 	
-	
-	
+	//vending machine constructor
 	public VendingMachine() {
 		stockFromFile();
 	}
 	
+
 	public void mainMenu() {
 		boolean goodInput = false;
 		
@@ -32,8 +32,8 @@ public class VendingMachine implements Purchasable {
 					goodInput = false;
 				}
 				else if(selection.equals("2")) {
-					purchaseMenu();
 					goodInput = true;
+					purchaseMenu();
 				}
 				else if(selection.equals("3")) {
 					goodInput = true;
@@ -48,6 +48,8 @@ public class VendingMachine implements Purchasable {
 		System.out.println("(1) Feed Money" + '\n' + "(2) Select Product" + '\n' + "(3) Finish Transaction");
 		//System.out.println(currentMoney());
 	}
+	
+	
 	
 	private void stockFromFile() {
 		File inventory = new File("vendingmachine.csv");
