@@ -45,9 +45,43 @@ public class VendingMachine implements Purchasable {
 	}
 		
 	public void purchaseMenu() {
+		boolean goodInput = false;
+		while(!goodInput) {
 		System.out.println("(1) Feed Money" + '\n' + "(2) Select Product" + '\n' + "(3) Finish Transaction");
+		//NEW
+		System.out.println();
+		Scanner userInput = new Scanner(System.in);
+		String selection = userInput.nextLine();
+		
+			if(selection.equals("1")) {
+				System.out.print("Enter money: ");
+				 Scanner addMoney = new Scanner(System.in);
+				 int balance = 0;
+				 int money = addMoney.nextInt() + balance;
+				 
+				 System.out.println("Current Money: " + money);
+				goodInput = true;
+				
+			}
+			else if(selection.equals("2")) {
+				//select product
+				goodInput = true;
+			}
+			else if(selection.equals("3")) {
+				//finish transaction
+				goodInput = true;
+			}
 		//System.out.println(currentMoney());
-	}
+		
+			}
+		}
+
+
+	
+	
+	
+	
+	
 	
 	private void stockFromFile() {
 		File inventory = new File("vendingmachine.csv");
