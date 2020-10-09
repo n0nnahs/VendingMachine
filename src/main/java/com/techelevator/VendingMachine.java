@@ -2,8 +2,13 @@ package com.techelevator;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +25,7 @@ public class VendingMachine implements Purchasable {
 	}
 	
 
-	public void mainMenu() {
+	public void mainMenu() throws NumberFormatException, IOException {
 		boolean goodInput = false;
 		
 		while(!goodInput) {
@@ -46,7 +51,7 @@ public class VendingMachine implements Purchasable {
 		}			
 	}
 		
-	public void purchaseMenu() {
+	public void purchaseMenu() throws NumberFormatException, IOException {
 		boolean goodInput = false;
 		while(!goodInput) {
 		System.out.println("(1) Feed Money" + '\n' + "(2) Select Product" + '\n' + "(3) Finish Transaction");
@@ -71,59 +76,107 @@ public class VendingMachine implements Purchasable {
 			}
 		}
 
-
-	public void feedMoney() {
+	public void feedMoney() throws NumberFormatException, IOException {
 		boolean finish = false;
 		while(!finish) {
 			System.out.println();
 			System.out.println("Please select amount to feed: (1) $1, (2) $2, (5) $5, (10) $10");
 			System.out.println("Press p to Select Product");
-			 String money = userInput.nextLine();
+			String money = userInput.nextLine();
+			
 			if(money.toLowerCase().equals("p")) {
 				finish = true;
 				selectItem();
 			}
 			else {
+				log("FEED MONEY:", currentBalance, Double.parseDouble(money));
 				currentBalance += Double.parseDouble(money);
-			 System.out.println();
-			 System.out.println("Current balance: " + currentBalance);
+				System.out.println();
+				System.out.println("Current balance: " + currentBalance);
 			}
 		}
 	}
 	
-	
-	
-	public void selectItem() {
+	public void selectItem() throws NumberFormatException, IOException {
 		displayInventory();
-		
+		System.out.println(currentBalance);
+
 		System.out.println();
 		System.out.println("Please enter an item code: ");
-		String userSelection = userInput.nextLine();
-		String dispenseQuantity = "";
+		String userSelection = userInput.nextLine().toUpperCase();
+		int dispenseQuantity = 0;
 		
 		for(Item inventory : inventoryList) {
-			if(inventory.getLocation() != userSelection) {
-				System.out.println("Invalid selection");
-			}
-			else if(inventory.getLocation() == userSelection && inventory.getQuantity() >= Integer.parseInt(dispenseQuantity)) {
+		
+			if(inventory.getLocation().equals(userSelection)) {
 				System.out.println("How many would you like to dispense? ");
-				dispenseQuantity = userInput.nextLine();
+				dispenseQuantity = Integer.parseInt(userInput.nextLine());
 				
-				currentBalance -= inventory.getPrice();
-				inventory.dispense(Integer.parseInt(dispenseQuantity));
+				//if funds are not enough
+				if(currentBalance <= (inventory.getPrice() * dispenseQuantity)) {
+					System.out.println("Insufficient Funds!");
+					purchaseMenu();
+				}	
+				
+				else if(currentBalance >= (inventory.getPrice() * dispenseQuantity)) {
+				
+					if(inventory.getQuantity() < dispenseQuantity) {
+						System.out.println("Not enough product available!");
+						selectItem();
+					}
+				
+				
+					if(inventory.getQuantity() >= dispenseQuantity ) {
+						
+						currentBalance -= (inventory.getPrice() * dispenseQuantity);
+						inventory.dispense(dispenseQuantity);
+						purchaseMenu();
+					}
+					if(inventory.getQuantity() < dispenseQuantity) {
+						System.out.println("Not enough product available!");
+						selectItem();
+				}
+			
 			}
-			else if(inventory.getLocation() == userSelection && inventory.getQuantity() == 0) {
-				System.out.println("Sold Out!");
+			else if(!inventory.getLocation().equals(userSelection)) {
+					System.out.println("Invalid selection");
+					selectItem();
 			}
+				
+			}	
+
 		}
 	}
+	
+	private void log(String action, double startingMoney, double endingMoney) throws IOException {
+		DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+		Date date = new Date();
+		
+		File log = new File("log.txt");
+		if(!log.exists()) {
+			try {
+				log.createNewFile();
+			}
+			catch(IOException e){
+				System.out.println("IO Exception");
+			}
+		}
+		try(FileWriter myFileWriter = new FileWriter(log.getAbsolutePath(), true); //open for appending instead of rewriting
+				PrintWriter myPrintWriter = new PrintWriter(myFileWriter)) {
+				myPrintWriter.println(date + " " + action + " " + startingMoney + " " + endingMoney);
+			}
+		}	
+		
+		
+		
+	
 	
 	
 	
 	private void stockFromFile() {
 		File inventory = new File("vendingmachine.csv");
 		
-		try(Scanner inventoryStream = new Scanner(inventory))	 {
+		try(Scanner inventoryStream = new Scanner(inventory)){
 			
 			while(inventoryStream.hasNextLine()) {
 				

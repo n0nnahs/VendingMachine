@@ -6,4 +6,10 @@ public class Drink extends Item {
 		super(location, name, price, type);
 	}
 
+	@Override
+	public void message() {
+		System.out.println("Glug Glug, Yum!");
+		System.out.println();
+	}
+
 }

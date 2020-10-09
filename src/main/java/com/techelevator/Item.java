@@ -35,13 +35,13 @@ public class Item {
 	public void dispense(int quantityToRemove) {
 		if(quantity - quantityToRemove >=0) {
 			quantity -= quantityToRemove;
-			System.out.println("Success");
-		}else {
-			System.out.println("Out of Stock");
+			message();
 		}
 	}
 
-
+	public void message() {
+		
+	}
 
 	//Getters & Setters
 
@@ -60,6 +60,14 @@ public class Item {
 	public String getType() {
 		return type;
 	}
+
+
+
+
+
+
+
+
 	
 
 }
