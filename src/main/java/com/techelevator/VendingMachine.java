@@ -12,6 +12,7 @@ import java.util.Scanner;
 public class VendingMachine implements Purchasable {
 	Scanner userInput = new Scanner(System.in);
 	protected List<Item> inventoryList = new ArrayList<>();
+	protected double currentBalance = 0.00;
 	
 	//vending machine constructor
 	public VendingMachine() {
@@ -49,39 +50,73 @@ public class VendingMachine implements Purchasable {
 		boolean goodInput = false;
 		while(!goodInput) {
 		System.out.println("(1) Feed Money" + '\n' + "(2) Select Product" + '\n' + "(3) Finish Transaction");
-		//NEW
 		System.out.println();
-		//Scanner userInput = new Scanner(System.in);
 		String selection = userInput.nextLine();
 		
 			if(selection.equals("1")) {
-				System.out.print("Enter money: ");
-				 //Scanner addMoney = new Scanner(System.in);
-				 int money = userInput.nextInt();
-				 //FIND SUM OF MONEY ADDED HERE
-				 System.out.println("Current Money: " );
 				goodInput = true;
-				
+				feedMoney();
 			}
 			else if(selection.equals("2")) {
 				//select product
+				selectItem();
 				goodInput = true;
 			}
 			else if(selection.equals("3")) {
 				//finish transaction
 				goodInput = true;
 			}
-		//System.out.println(currentMoney());
+		System.out.println("Current balance: " + currentBalance);
 		
 			}
 		}
 
 
+	public void feedMoney() {
+		boolean finish = false;
+		while(!finish) {
+			System.out.println();
+			System.out.println("Please select amount to feed: (1) $1, (2) $2, (5) $5, (10) $10");
+			System.out.println("Press p to Select Product");
+			 String money = userInput.nextLine();
+			if(money.toLowerCase().equals("p")) {
+				finish = true;
+				selectItem();
+			}
+			else {
+				currentBalance += Double.parseDouble(money);
+			 System.out.println();
+			 System.out.println("Current balance: " + currentBalance);
+			}
+		}
+	}
 	
 	
 	
-	
-	
+	public void selectItem() {
+		displayInventory();
+		
+		System.out.println();
+		System.out.println("Please enter an item code: ");
+		String userSelection = userInput.nextLine();
+		String dispenseQuantity = "";
+		
+		for(Item inventory : inventoryList) {
+			if(inventory.getLocation() != userSelection) {
+				System.out.println("Invalid selection");
+			}
+			else if(inventory.getLocation() == userSelection && inventory.getQuantity() >= Integer.parseInt(dispenseQuantity)) {
+				System.out.println("How many would you like to dispense? ");
+				dispenseQuantity = userInput.nextLine();
+				
+				currentBalance -= inventory.getPrice();
+				inventory.dispense(Integer.parseInt(dispenseQuantity));
+			}
+			else if(inventory.getLocation() == userSelection && inventory.getQuantity() == 0) {
+				System.out.println("Sold Out!");
+			}
+		}
+	}
 	
 	
 	
