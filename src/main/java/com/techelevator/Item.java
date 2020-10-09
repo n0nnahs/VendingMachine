@@ -31,8 +31,8 @@ public class Item {
 	public int getQuantityLeft() {
 		return quantity;
 	}
-	
-	public String dispense(int quantityToRemove) {
+	//NEW
+	public void dispense(int quantityToRemove) {
 		if(quantity - quantityToRemove >=0) {
 			quantity -= quantityToRemove;
 			System.out.println("Success");
