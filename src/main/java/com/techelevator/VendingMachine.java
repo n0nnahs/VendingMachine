@@ -147,8 +147,13 @@ public class VendingMachine implements Purchasable {
 	}
 	
 	private void log(String action, double startingMoney, double endingMoney) throws IOException {
+<<<<<<< HEAD
 		DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
+=======
+		DateFormat dateFormat = new SimpleDateFormat("dd/mm/yyyy HH:mm:ss");
+>>>>>>> 43540bab2e3b5c4f1cdb616a1c9f41e936655182
 		Date date = new Date();
+		String dateString = dateFormat.format(date);
 		
 		File log = new File("log.txt");
 		if(!log.exists()) {
@@ -161,7 +166,11 @@ public class VendingMachine implements Purchasable {
 		}
 		try(FileWriter myFileWriter = new FileWriter(log.getAbsolutePath(), true); //open for appending instead of rewriting
 				PrintWriter myPrintWriter = new PrintWriter(myFileWriter)) {
+<<<<<<< HEAD
 				myPrintWriter.println(dateFormat.format(date) + " " + action + " $" + df.format(startingMoney) + " $" + df.format(endingMoney));
+=======
+				myPrintWriter.println(dateString + " " + action + " " + startingMoney + " " + endingMoney);
+>>>>>>> 43540bab2e3b5c4f1cdb616a1c9f41e936655182
 			}
 		}	
 		
