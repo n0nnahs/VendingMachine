@@ -162,7 +162,7 @@ public class VendingMachine implements Purchasable {
 		}
 		try(FileWriter myFileWriter = new FileWriter(log.getAbsolutePath(), true); //open for appending instead of rewriting
 				PrintWriter myPrintWriter = new PrintWriter(myFileWriter)) {
-				myPrintWriter.println(dateFormat.format(date) + " " + action + " $" + df.format(startingMoney) + " $" + df.format(endingMoney));
+				myPrintWriter.println(dateString + " " + action + " $" + df.format(startingMoney) + " $" + df.format(endingMoney));
 			}
 		}	
 		
