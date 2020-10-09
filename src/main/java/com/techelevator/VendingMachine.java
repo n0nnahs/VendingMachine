@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,6 +19,7 @@ public class VendingMachine implements Purchasable {
 	Scanner userInput = new Scanner(System.in);
 	protected List<Item> inventoryList = new ArrayList<>();
 	protected double currentBalance = 0.00;
+	private static DecimalFormat df = new DecimalFormat("0.00");
 	
 	//vending machine constructor
 	public VendingMachine() {
@@ -29,7 +31,7 @@ public class VendingMachine implements Purchasable {
 		boolean goodInput = false;
 		
 		while(!goodInput) {
-			System.out.println("(1) Display Vending Machine Items" + '\n' + "(2) Purchase" + '\n' + "(3) Exit");
+			System.out.println("(1) Display Vending Machine Items      (2) Purchase      (3) Exit");
 			System.out.println();
 			//Scanner userInput = new Scanner(System.in);
 			String selection = userInput.nextLine();
@@ -54,11 +56,13 @@ public class VendingMachine implements Purchasable {
 	public void purchaseMenu() throws NumberFormatException, IOException {
 		boolean goodInput = false;
 		while(!goodInput) {
-		System.out.println("(1) Feed Money" + '\n' + "(2) Select Product" + '\n' + "(3) Finish Transaction");
+		System.out.println("(1) Feed Money      (2) Select Product      (3) Finish Transaction");
+		System.out.println("Current Balance: $" + df.format(currentBalance));
 		System.out.println();
 		String selection = userInput.nextLine();
 		
 			if(selection.equals("1")) {
+				//feed money
 				goodInput = true;
 				feedMoney();
 			}
@@ -70,9 +74,7 @@ public class VendingMachine implements Purchasable {
 			else if(selection.equals("3")) {
 				//finish transaction
 				goodInput = true;
-			}
-		System.out.println("Current balance: " + currentBalance);
-		
+			}		
 			}
 		}
 
@@ -81,8 +83,8 @@ public class VendingMachine implements Purchasable {
 		while(!finish) {
 			System.out.println();
 			System.out.println("Please select amount to feed: (1) $1, (2) $2, (5) $5, (10) $10");
-			System.out.println("Press p to Select Product");
 			String money = userInput.nextLine();
+			System.out.println("\t Press P to Select Product");
 			
 			if(money.toLowerCase().equals("p")) {
 				finish = true;
@@ -92,14 +94,14 @@ public class VendingMachine implements Purchasable {
 				log("FEED MONEY:", currentBalance, Double.parseDouble(money));
 				currentBalance += Double.parseDouble(money);
 				System.out.println();
-				System.out.println("Current balance: " + currentBalance);
+				System.out.println("Current balance: $" + df.format(currentBalance));
 			}
 		}
 	}
 	
 	public void selectItem() throws NumberFormatException, IOException {
 		displayInventory();
-		System.out.println(currentBalance);
+		System.out.println("Current Balance: $" + df.format(currentBalance));
 
 		System.out.println();
 		System.out.println("Please enter an item code: ");
@@ -107,7 +109,7 @@ public class VendingMachine implements Purchasable {
 		int dispenseQuantity = 0;
 		
 		for(Item inventory : inventoryList) {
-		
+			//if user enters a valid location
 			if(inventory.getLocation().equals(userSelection)) {
 				System.out.println("How many would you like to dispense? ");
 				dispenseQuantity = Integer.parseInt(userInput.nextLine());
@@ -118,38 +120,34 @@ public class VendingMachine implements Purchasable {
 					purchaseMenu();
 				}	
 				
+				//if there are enough funds for the transaction
 				else if(currentBalance >= (inventory.getPrice() * dispenseQuantity)) {
-				
+					
+					//if there isn't enough product inventory
 					if(inventory.getQuantity() < dispenseQuantity) {
 						System.out.println("Not enough product available!");
 						selectItem();
 					}
 				
-				
+					//if there is enough product
 					if(inventory.getQuantity() >= dispenseQuantity ) {
 						
 						currentBalance -= (inventory.getPrice() * dispenseQuantity);
 						inventory.dispense(dispenseQuantity);
 						purchaseMenu();
 					}
-					if(inventory.getQuantity() < dispenseQuantity) {
-						System.out.println("Not enough product available!");
-						selectItem();
-				}
 			
+				}
 			}
 			else if(!inventory.getLocation().equals(userSelection)) {
 					System.out.println("Invalid selection");
 					selectItem();
-			}
-				
 			}	
-
 		}
 	}
 	
 	private void log(String action, double startingMoney, double endingMoney) throws IOException {
-		DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+		DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
 		Date date = new Date();
 		
 		File log = new File("log.txt");
@@ -163,7 +161,7 @@ public class VendingMachine implements Purchasable {
 		}
 		try(FileWriter myFileWriter = new FileWriter(log.getAbsolutePath(), true); //open for appending instead of rewriting
 				PrintWriter myPrintWriter = new PrintWriter(myFileWriter)) {
-				myPrintWriter.println(date + " " + action + " " + startingMoney + " " + endingMoney);
+				myPrintWriter.println(dateFormat.format(date) + " " + action + " $" + df.format(startingMoney) + " $" + df.format(endingMoney));
 			}
 		}	
 		
