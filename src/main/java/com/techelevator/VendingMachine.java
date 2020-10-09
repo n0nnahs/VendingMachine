@@ -56,10 +56,9 @@ public class VendingMachine implements Purchasable {
 			if(selection.equals("1")) {
 				System.out.print("Enter money: ");
 				 Scanner addMoney = new Scanner(System.in);
-				 int balance = 0;
-				 int money = addMoney.nextInt() + balance;
-				 
-				 System.out.println("Current Money: " + money);
+				 int money = addMoney.nextInt();
+				 //FIND SUM OF MONEY ADDED HERE
+				 System.out.println("Current Money: " );
 				goodInput = true;
 				
 			}
