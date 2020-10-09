@@ -13,12 +13,12 @@ public class VendingMachine implements Purchasable {
 	Scanner userInput = new Scanner(System.in);
 	protected List<Item> inventoryList = new ArrayList<>();
 	
-	
-	
+	//vending machine constructor
 	public VendingMachine() {
 		stockFromFile();
 	}
 	
+
 	public void mainMenu() {
 		boolean goodInput = false;
 		
@@ -33,8 +33,8 @@ public class VendingMachine implements Purchasable {
 					goodInput = false;
 				}
 				else if(selection.equals("2")) {
-					purchaseMenu();
 					goodInput = true;
+					purchaseMenu();
 				}
 				else if(selection.equals("3")) {
 					goodInput = true;
@@ -77,6 +77,8 @@ public class VendingMachine implements Purchasable {
 		}
 
 
+	
+	
 	
 	
 	
