@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class VendingMachine implements Purchasable {
+	Scanner userInput = new Scanner(System.in);
 	protected List<Item> inventoryList = new ArrayList<>();
 	
 	
@@ -24,7 +25,7 @@ public class VendingMachine implements Purchasable {
 		while(!goodInput) {
 			System.out.println("(1) Display Vending Machine Items" + '\n' + "(2) Purchase" + '\n' + "(3) Exit");
 			System.out.println();
-			Scanner userInput = new Scanner(System.in);
+			//Scanner userInput = new Scanner(System.in);
 			String selection = userInput.nextLine();
 			
 				if(selection.equals("1")) {
@@ -50,13 +51,13 @@ public class VendingMachine implements Purchasable {
 		System.out.println("(1) Feed Money" + '\n' + "(2) Select Product" + '\n' + "(3) Finish Transaction");
 		//NEW
 		System.out.println();
-		Scanner userInput = new Scanner(System.in);
+		//Scanner userInput = new Scanner(System.in);
 		String selection = userInput.nextLine();
 		
 			if(selection.equals("1")) {
 				System.out.print("Enter money: ");
-				 Scanner addMoney = new Scanner(System.in);
-				 int money = addMoney.nextInt();
+				 //Scanner addMoney = new Scanner(System.in);
+				 int money = userInput.nextInt();
 				 //FIND SUM OF MONEY ADDED HERE
 				 System.out.println("Current Money: " );
 				goodInput = true;
