@@ -83,7 +83,7 @@ public class Log {
 	}
 	
 	
-	
+	 
 	
 	private void writeToLogAction() throws IOException  {
 		DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");

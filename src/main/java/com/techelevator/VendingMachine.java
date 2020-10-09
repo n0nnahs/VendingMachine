@@ -30,6 +30,7 @@ public class VendingMachine {
 
 	public void mainMenu() throws NumberFormatException, IOException {
 		boolean goodInput = false;
+		System.out.println();
 		System.out.println("*********************");
 		System.out.println("*  Vendo-Matic 800  *");
 		System.out.println("*     Main Menu     *");
@@ -61,6 +62,7 @@ public class VendingMachine {
 		
 	public void purchaseMenu() throws NumberFormatException, IOException {
 		boolean goodInput = false;
+		System.out.println();
 		System.out.println("*********************");
 		System.out.println("*  Vendo-Matic 800  *");
 		System.out.println("*   Purchase Menu   *");
@@ -69,7 +71,9 @@ public class VendingMachine {
 		
 		while(!goodInput) {
 			System.out.println("(1) Feed Money      (2) Select Product      (3) Finish Transaction");
-			System.out.println("Current Balance: $" + df.format(currentBalance));
+			System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+			System.out.println("Current balance: $" + df.format(currentBalance));
+			System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 			System.out.println();
 			String selection = userInput.nextLine();
 			
@@ -88,7 +92,7 @@ public class VendingMachine {
 					goodInput = true;
 					mainMenu();
 				}		
-				}
+			}
 		}
 
 	public void feedMoney() throws NumberFormatException, IOException {
@@ -97,7 +101,9 @@ public class VendingMachine {
 			System.out.println();
 			System.out.println("\t Press P to Select Product");
 			System.out.println("Please select amount to feed: (1) $1, (2) $2, (5) $5, (10) $10");
+			System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 			System.out.println("Current balance: $" + df.format(currentBalance));
+			System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 			System.out.print(" >>> ");
 			String money = userInput.nextLine();
 			
@@ -111,7 +117,7 @@ public class VendingMachine {
 				Log l = new Log("FEED MONEY: ", startingAmount, currentBalance);
 			}
 			else {
-				System.out.println("Invalid input");
+				invalidEntryBanner();
 			}
 		}
 	}
@@ -123,51 +129,90 @@ public class VendingMachine {
 		System.out.println();
 		System.out.println("Please enter an item code: ");
 		String userSelection = userInput.nextLine().toUpperCase();
-		int dispenseQuantity = 0;
 		
-		for(Item inventory : inventoryList) {
-			
-			//if user enters a valid location
-			if(inventory.getLocation().equals(userSelection)) {
-				System.out.println("How many would you like to dispense? ");
-				dispenseQuantity = Integer.parseInt(userInput.nextLine());
-				
-				//if funds are not enough
-				if(currentBalance <= (inventory.getPrice() * dispenseQuantity)) {
-					System.out.println("Insufficient Funds!");
-					purchaseMenu();
-				}	
-				
-				//if there are enough funds for the transaction
-				else if(currentBalance >= (inventory.getPrice() * dispenseQuantity)) {
-					
-					//if there isn't enough product inventory
-					if(inventory.getQuantity() < dispenseQuantity) {
-						System.out.println("Not enough product available!");
-						selectItem();
-					}
-				
-					//if there is enough product
-					if(inventory.getQuantity() >= dispenseQuantity ) {
-						//log(inventory.getName(), inventory.getLocation(), currentBalance, (currentBalance - (inventory.getPrice() * dispenseQuantity)));
-						double startingAmount = currentBalance;
-						currentBalance -= (inventory.getPrice() * dispenseQuantity);
-						inventory.dispense(dispenseQuantity);
-						
-						Log l = new Log(inventory.getName(), inventory.getLocation(), startingAmount, currentBalance);
-
-						purchaseMenu();
-					}
-			
+		boolean goodInput = false;
+		
+		while(!goodInput) {
+			for(Item inventory : inventoryList) {
+				//if user enters a valid location
+				if(inventory.getLocation().equals(userSelection)) {
+					goodInput = true;
+					goodItemSelection(inventory);
 				}
-				else if(!inventory.getLocation().equals(userSelection)) {
-					System.out.println("Invalid selection");
-					selectItem();
 			}
+		invalidEntryBanner();
+		selectItem();
+		}
+	}
+	
+	public void goodItemSelection(Item inventory) throws IOException {
+		int dispenseQuantity = 0;
+
+		boolean goodInput = false;
+		while(!goodInput) {
+			System.out.println("How many would you like to dispense? ");
+			String kb = userInput.nextLine();
+
+			if(kb.equals("1") || kb.equals("2") || kb.equals("3") || kb.equals("4")|| kb.equals("5")) {
+				dispenseQuantity = Integer.parseInt(kb);
+				goodInput = true;
+			}
+			else {
+				invalidEntryBanner();
+			}
+		}
+		
+		if(dispenseQuantity < 0) {
+			invalidEntryBanner();
+			selectItem();
+		}else {
+			//if funds are not enough
+			//if there isn't enough product inventory
+			if(inventory.getQuantity() < dispenseQuantity) {
+				System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+				System.out.println(" Not enough product available!");
+				System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+				selectItem();
+			}
+			if(currentBalance <= (inventory.getPrice() * dispenseQuantity)) {
+				System.out.println("!!!!!!!!!!!!!!!!!!!!!!");
+				System.out.println(" Insufficient Funds!");
+				System.out.println("!!!!!!!!!!!!!!!!!!!!!!");
+
+				purchaseMenu();
+			}	
+			
+			//if there are enough funds for the transaction
+			else if(currentBalance >= (inventory.getPrice() * dispenseQuantity)) {
+				
+				//if there isn't enough product inventory
+				if(inventory.getQuantity() < dispenseQuantity) {
+					System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+					System.out.println(" Not enough product available!");
+					System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+					selectItem();
+				}
+			
+				//if there is enough product
+				if(inventory.getQuantity() >= dispenseQuantity ) {
+					double startingAmount = currentBalance;
+					currentBalance -= (inventory.getPrice() * dispenseQuantity);
+					inventory.dispense(dispenseQuantity);
+				
+					//loops the log constructor to create separate lines in the log for each item removed
+					double m = startingAmount;
+					for(int i = 0; i < dispenseQuantity; i++) {
+						Log l = new Log(inventory.getName(), inventory.getLocation(), m, (m - inventory.getPrice()));
+						m -= inventory.getPrice();
+					}	
+					purchaseMenu();
+				}
 			}
 		}
 	}
-
+	
+	
+	
 	public void returnChange() throws IOException {
 		int change = (int)(Math.ceil(currentBalance*100));
 		
@@ -196,15 +241,19 @@ public class VendingMachine {
 	}
 		
 	private void exit() {
-		System.out.println("*********************************************************");
-		System.out.println("*Umbrella Corp would like to thank you for your purchase*");
-		System.out.println("*     Thank you for vending with Vendo-Matic 800        *");
-		System.out.println("*********************************************************");
+		System.out.println("***********************************************************");
+		System.out.println("* Umbrella Corp would like to thank you for your purchase *");
+		System.out.println("*       Thank you for vending with Vendo-Matic 800        *");
+		System.out.println("***********************************************************");
 
 		System.exit(1);;
 	}
 	
-	
+	private void invalidEntryBanner() {
+		System.out.println("!!!!!!!!!!!!!!!");
+		System.out.println(" Invalid Entry ");
+		System.out.println("!!!!!!!!!!!!!!!");
+	}
 	
 	
 	private boolean stockFromFile() {

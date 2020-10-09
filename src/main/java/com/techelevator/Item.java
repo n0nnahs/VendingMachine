@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Item {
-	
 	private int quantity = 5;
 	private String location;
 	private String name;
@@ -27,6 +26,8 @@ public class Item {
 
 	public int dispense(int quantityToRemove) {
 			quantity -= quantityToRemove;
+			
+			
 			System.out.println();
 			System.out.println(name + " $" + df.format(price * quantityToRemove));
 			message();
